@@ -1,7 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    loader: 'custom',
+    loaderFile: './lib/cloudinary-loader.ts',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/image/**',
+      },
+    ],
+  },
 };
 
 export default nextConfig;
