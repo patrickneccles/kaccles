@@ -1,53 +1,48 @@
-'use client'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState(false)
-  const router = useRouter()
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
+  const router = useRouter();
 
   async function handleSubmit() {
-    const res = await fetch('/api/keystatic-login', {
-      method: 'POST',
+    const res = await fetch("/api/keystatic-login", {
+      method: "POST",
       body: JSON.stringify({ password }),
-      headers: { 'Content-Type': 'application/json' },
-    })
+      headers: { "Content-Type": "application/json" },
+    });
     if (res.ok) {
-      router.push('/keystatic')
+      router.push("/keystatic");
     } else {
-      setError(true)
+      setError(true);
     }
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontFamily: 'system-ui, sans-serif',
-    }}>
-      <div style={{ width: 320, display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <h1 style={{ fontSize: 20, fontWeight: 500, margin: '0 0 8px' }}>Admin login</h1>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="w-80 flex flex-col gap-3">
+        <h1 className="text-xl font-medium mb-2">Admin login</h1>
         <input
           type="password"
           placeholder="Password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-          style={{ padding: '10px 12px', fontSize: 15, borderRadius: 8, border: '1px solid #ddd' }}
+          onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+          className="px-3 py-2.5 text-sm rounded-lg border border-white/20 bg-white/5 text-white placeholder:text-white/30 focus:outline-none focus:border-white/40"
         />
         {error && (
-          <p style={{ color: 'red', fontSize: 13, margin: 0 }}>Incorrect password</p>
+          <p className="text-red-400 text-xs">Incorrect password</p>
         )}
         <button
           onClick={handleSubmit}
-          style={{ padding: '10px 12px', fontSize: 15, borderRadius: 8, cursor: 'pointer' }}
+          className="px-3 py-2.5 text-sm rounded-lg bg-white text-black font-medium hover:bg-white/90 transition-colors"
         >
           Sign in
         </button>
       </div>
     </div>
-  )
+  );
 }

@@ -13,10 +13,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${geist.variable} antialiased`}>
-      <body className="bg-black text-white">
+      <body className="bg-black text-white min-h-screen flex flex-col">
         <header className="fixed top-0 inset-x-0 z-40 flex items-center justify-between px-6 py-5 bg-black/60 backdrop-blur-sm">
           <Link href="/" className="text-sm tracking-[0.2em] uppercase font-medium">
-            Kathy Eccles
+            Kathy Eccles Photography
           </Link>
           <nav>
             <Link
@@ -27,7 +27,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Link>
           </nav>
         </header>
-        {children}
+        <div className="flex-1 min-h-0">{children}</div>
+        <footer className="flex items-center justify-between px-6 py-5 text-white/30 text-xs">
+          <span>© {new Date().getFullYear()} Kathy Eccles. All rights reserved.</span>
+          <Link href="/keystatic" className="hover:text-white/60 transition-colors">Admin</Link>
+        </footer>
       </body>
     </html>
   );

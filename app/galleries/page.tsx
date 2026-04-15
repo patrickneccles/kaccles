@@ -1,8 +1,8 @@
-import reader from "../../lib/reader";
-import GalleryCard from "../_components/GalleryCard";
+import { getGalleries } from "../../lib/reader";
+import GalleryCard from "../../components/GalleryCard";
 
 export default async function GalleriesPage() {
-  const galleries = await reader.collections.galleries.all();
+  const galleries = await getGalleries();
 
   return (
     <main className="pt-[3.75rem]">
@@ -17,7 +17,7 @@ export default async function GalleriesPage() {
               key={gallery.slug}
               slug={gallery.slug}
               title={gallery.entry.title}
-              coverImage={gallery.entry.coverImage ?? null}
+              firstPhoto={gallery.entry.photos[0]?.image ?? null}
               subject={gallery.entry.subject}
               location={gallery.entry.location}
               priority={i < 3}

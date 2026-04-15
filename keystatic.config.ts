@@ -18,11 +18,6 @@ export default config({
       path: 'content/galleries/*',
       schema: {
         title: fields.slug({ name: { label: 'Title' } }),
-        coverImage: fields.image({
-          label: 'Cover image',
-          description: 'Shown in the gallery grid on the home page.',
-          ...IMAGES_DIR,
-        }),
         location: fields.text({
           label: 'Location',
           description: 'Where the shoot took place — e.g. "Yellowstone National Park"',
@@ -37,7 +32,7 @@ export default config({
         }),
         description: fields.text({
           label: 'Description',
-          description: 'Optional short note about this gallery. Keep it brief.',
+          description: 'Optional short note about this gallery.',
           multiline: true,
         }),
         photos: fields.array(

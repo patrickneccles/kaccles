@@ -1,4 +1,3 @@
-// src/app/keystatic/keystatic.ts
 "use client";
 
 import { makePage } from "@keystatic/next/ui/app";

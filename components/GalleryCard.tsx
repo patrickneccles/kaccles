@@ -4,21 +4,21 @@ import Link from "next/link";
 type Props = {
   slug: string;
   title: string;
-  coverImage: string | null;
+  firstPhoto: string | null;
   subject?: string | null;
   location?: string | null;
   priority?: boolean;
 };
 
-export default function GalleryCard({ slug, title, coverImage, subject, location, priority }: Props) {
+export default function GalleryCard({ slug, title, firstPhoto, subject, location, priority }: Props) {
   return (
     <Link
       href={`/galleries/${slug}`}
       className="relative block aspect-[4/3] overflow-hidden group bg-zinc-900"
     >
-      {coverImage && (
+      {firstPhoto && (
         <Image
-          src={coverImage}
+          src={firstPhoto}
           alt={title}
           fill
           priority={priority}

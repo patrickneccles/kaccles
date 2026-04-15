@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import reader from "../lib/reader";
-import GalleryCard from "./_components/GalleryCard";
+import { getGalleries } from "../lib/reader";
+import GalleryCard from "../components/GalleryCard";
 
 export default async function HomePage() {
-  const galleries = await reader.collections.galleries.all();
+  const galleries = await getGalleries();
 
   if (galleries.length === 0) {
     return (
@@ -15,14 +15,14 @@ export default async function HomePage() {
   }
 
   const [featured, ...rest] = galleries;
-
+  
   return (
-    <main>
-      {/* Hero — full-screen cover of the most recent gallery */}
+    <main className="bg-black">
+      {/* Hero — full-screen first photo of the most recent gallery */}
       <Link href={`/galleries/${featured.slug}`} className="relative flex h-screen">
-        {featured.entry.coverImage && (
+        {featured.entry.photos[0]?.image && (
           <Image
-            src={featured.entry.coverImage}
+            src={featured.entry.photos[0].image}
             alt={featured.entry.title}
             fill
             priority
@@ -54,7 +54,7 @@ export default async function HomePage() {
               key={gallery.slug}
               slug={gallery.slug}
               title={gallery.entry.title}
-              coverImage={gallery.entry.coverImage ?? null}
+              firstPhoto={gallery.entry.photos[0]?.image ?? null}
               subject={gallery.entry.subject}
               location={gallery.entry.location}
             />
