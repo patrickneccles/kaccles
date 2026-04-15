@@ -1,21 +1,21 @@
-import Image from "next/image";
-import Link from "next/link";
-import { getGalleries } from "../lib/reader";
-import GalleryCard from "../components/GalleryCard";
+import Image from "next/image"
+import Link from "next/link"
+import { getGalleries } from "../lib/reader"
+import GalleryCard from "../components/GalleryCard"
 
 export default async function HomePage() {
-  const galleries = await getGalleries();
+  const galleries = await getGalleries()
 
   if (galleries.length === 0) {
     return (
       <main className="flex h-screen items-center justify-center">
         <p className="text-white/30 text-xs tracking-[0.3em] uppercase">No galleries yet</p>
       </main>
-    );
+    )
   }
 
-  const [featured, ...rest] = galleries;
-  
+  const [featured, ...rest] = galleries
+
   return (
     <main className="bg-black">
       {/* Hero — full-screen first photo of the most recent gallery */}
@@ -49,7 +49,7 @@ export default async function HomePage() {
       {/* Remaining galleries */}
       {rest.length > 0 && (
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0.5 mt-0.5">
-          {rest.map((gallery) => (
+          {rest.map((gallery, i) => (
             <GalleryCard
               key={gallery.slug}
               slug={gallery.slug}
@@ -57,10 +57,11 @@ export default async function HomePage() {
               firstPhoto={gallery.entry.photos[0]?.image ?? null}
               subject={gallery.entry.subject}
               location={gallery.entry.location}
+              priority={i < 2}
             />
           ))}
         </section>
       )}
     </main>
-  );
+  )
 }

@@ -1,8 +1,6 @@
-import Link from "next/link";
-import KeystaticApp from "./keystatic";
+import Link from "next/link"
+import KeystaticApp from "./keystatic"
 
-// Fixed full-viewport overlay so Keystatic's own UI isn't obscured
-// by the site header (z-40) or footer from the root layout.
 export default function Layout() {
   return (
     <div className="fixed inset-0 z-50 overflow-auto bg-white">
@@ -14,5 +12,5 @@ export default function Layout() {
         ← Back to site
       </Link>
     </div>
-  );
+  )
 }
