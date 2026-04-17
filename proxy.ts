@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 
-const COOKIE_NAME = "keystatic-auth"
+const COOKIE_NAME = "admin-auth"
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  if (pathname === "/keystatic/login") {
+  if (pathname === "/admin/login") {
     return NextResponse.next()
   }
 
@@ -14,9 +14,9 @@ export function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  return NextResponse.redirect(new URL("/keystatic/login", request.url))
+  return NextResponse.redirect(new URL("/admin/login", request.url))
 }
 
 export const config = {
-  matcher: ["/keystatic(.*)-----"],
+  matcher: ["/admin(.*)"],
 }

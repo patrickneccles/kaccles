@@ -1,15 +1,14 @@
-import { createReader } from '@keystatic/core/reader';
-import keystaticConfig from '../keystatic.config';
+import { listGalleries, readGallery } from "./gallery-store"
+import type { Gallery } from "./gallery-store"
 
-const reader = createReader(process.cwd(), keystaticConfig);
+// Shape used by public pages: { slug, entry }
+export type GalleryListItem = { slug: string; entry: Gallery }
 
-export default reader;
+export async function getGalleries(): Promise<GalleryListItem[]> {
+  const galleries = await listGalleries()
+  return galleries.map(({ slug, gallery }) => ({ slug, entry: gallery }))
+}
 
-export async function getGalleries() {
-  const galleries = await reader.collections.galleries.all();
-  return galleries.sort((a, b) => {
-    if (!a.entry.shootDate) return 1;
-    if (!b.entry.shootDate) return -1;
-    return b.entry.shootDate.localeCompare(a.entry.shootDate);
-  });
+export async function getGallery(slug: string): Promise<Gallery | null> {
+  return readGallery(slug)
 }

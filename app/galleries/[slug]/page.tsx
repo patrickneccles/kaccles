@@ -2,15 +2,15 @@ import { cache } from "react"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import reader from "../../../lib/reader"
+import { getGallery, getGalleries } from "../../../lib/reader"
 import PhotoGrid from "../../../components/PhotoGrid"
 
 // Memoised so generateMetadata and the page component share one filesystem read.
-const getGallery = cache((slug: string) => reader.collections.galleries.read(slug))
+const fetchGallery = cache((slug: string) => getGallery(slug))
 
 export async function generateStaticParams() {
-  const slugs = await reader.collections.galleries.list()
-  return slugs.map((slug) => ({ slug }))
+  const galleries = await getGalleries()
+  return galleries.map(({ slug }) => ({ slug }))
 }
 
 export async function generateMetadata({
@@ -19,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const gallery = await getGallery(slug)
+  const gallery = await fetchGallery(slug)
   if (!gallery) return {}
 
   const heading = [gallery.subject, gallery.title].filter(Boolean).join(" — ")
@@ -46,7 +46,7 @@ export async function generateMetadata({
 
 export default async function GalleryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const gallery = await getGallery(slug)
+  const gallery = await fetchGallery(slug)
 
   if (!gallery) notFound()
 
