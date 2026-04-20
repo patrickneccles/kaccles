@@ -2,11 +2,13 @@
 
 import { useEffect, useRef, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-import PhotoEditor from "./PhotoEditor"
+import PhotoEditor, { type DisplayPhoto } from "./PhotoEditor"
 import type { Gallery } from "../../../../lib/gallery-store"
+
+type DisplayGallery = Omit<Gallery, "photos"> & { photos: DisplayPhoto[] }
 import { useConfirm } from "../../useConfirm"
 
-const EMPTY: Gallery = {
+const EMPTY: DisplayGallery = {
   title: "",
   location: "",
   subject: "",
@@ -18,8 +20,8 @@ const EMPTY: Gallery = {
 export default function EditGalleryPage() {
   const { slug } = useParams<{ slug: string }>()
   const router = useRouter()
-  const [gallery, setGallery] = useState<Gallery>(EMPTY)
-  const [savedGallery, setSavedGallery] = useState<Gallery | null>(null)
+  const [gallery, setGallery] = useState<DisplayGallery>(EMPTY)
+  const [savedGallery, setSavedGallery] = useState<DisplayGallery | null>(null)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const { dialog, confirm } = useConfirm()
@@ -69,7 +71,7 @@ export default function EditGalleryPage() {
     router.push("/admin")
   }
 
-  function field(key: keyof Gallery) {
+  function field(key: keyof DisplayGallery) {
     return {
       value: gallery[key] as string,
       onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>

@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { useState, useEffect, useRef, useCallback } from "react"
 
-type Photo = { image: string; caption: string }
+type Photo = { thumbUrl: string; galleryUrl: string; caption: string }
 
 export default function PhotoGrid({ photos, title }: { photos: Photo[]; title: string }) {
   const [active, setActive] = useState<number | null>(null)
@@ -59,12 +59,12 @@ export default function PhotoGrid({ photos, title }: { photos: Photo[]; title: s
             className="block w-full mb-0.5 cursor-zoom-in overflow-hidden group"
           >
             <Image
-              src={photo.image}
+              src={photo.thumbUrl}
               alt={photo.caption || title}
               width={800}
               height={600}
+              unoptimized
               className="w-full h-auto transition-opacity duration-300 group-hover:opacity-85"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           </button>
         ))}
@@ -108,13 +108,13 @@ export default function PhotoGrid({ photos, title }: { photos: Photo[]; title: s
             onContextMenu={(e) => e.preventDefault()}
           >
             <Image
-              src={photos[active].image}
+              src={photos[active].galleryUrl}
               alt={photos[active].caption || title}
               width={1600}
               height={1200}
+              unoptimized
               priority
               className="max-h-[82vh] w-auto object-contain"
-              sizes="(max-width: 1280px) 100vw, 80vw"
             />
             {photos[active].caption && (
               <p className="text-white/40 text-sm tracking-wide mt-4 text-center">

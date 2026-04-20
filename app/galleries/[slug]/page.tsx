@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { getGallery, getGalleries } from "../../../lib/reader"
 import PhotoGrid from "../../../components/PhotoGrid"
+import { signedPhotoUrl } from "../../../lib/cloudinary-server"
 
 // Memoised so generateMetadata and the page component share one filesystem read.
 const fetchGallery = cache((slug: string) => getGallery(slug))
@@ -25,14 +26,13 @@ export async function generateMetadata({
   const heading = [gallery.subject, gallery.title].filter(Boolean).join(" — ")
   const description =
     gallery.description ||
-    `${gallery.subject ? `${gallery.subject} photography` : "Photography"} by Kathy Eccles${gallery.location ? ` in ${gallery.location}` : ""}.`
+    `${gallery.subject ? `${gallery.subject} photography` : "Photography"} by Kathryn Eccles${gallery.location ? ` in ${gallery.location}` : ""}.`
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
   const firstPhoto = gallery.photos.find((p) => p.image)?.image
-  const ogImageUrl = firstPhoto && siteUrl ? `${siteUrl}${firstPhoto}` : undefined
+  const ogImageUrl = firstPhoto ? signedPhotoUrl(firstPhoto, "gallery") : undefined
 
   return {
-    title: `${heading} | Kathy Eccles Photography`,
+    title: `${heading} | Kathryn Eccles Photography`,
     description,
     openGraph: {
       title: heading,
@@ -52,7 +52,11 @@ export default async function GalleryPage({ params }: { params: Promise<{ slug: 
 
   const photos = gallery.photos
     .filter((p) => p.image)
-    .map((p) => ({ image: p.image!, caption: p.caption }))
+    .map((p) => ({
+      thumbUrl: signedPhotoUrl(p.image, "thumb"),
+      galleryUrl: signedPhotoUrl(p.image, "gallery"),
+      caption: p.caption,
+    }))
 
   return (
     <main className="pt-[3.75rem]">

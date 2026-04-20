@@ -1,29 +1,29 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from "next/image"
+import Link from "next/link"
 
 type Props = {
-  slug: string;
-  title: string;
-  firstPhoto: string | null;
-  subject?: string | null;
-  location?: string | null;
-  priority?: boolean;
-};
+  slug: string
+  title: string
+  imageUrl: string | null
+  subject?: string | null
+  location?: string | null
+  priority?: boolean
+}
 
-export default function GalleryCard({ slug, title, firstPhoto, subject, location, priority }: Props) {
+export default function GalleryCard({ slug, title, imageUrl, subject, location, priority }: Props) {
   return (
     <Link
       href={`/galleries/${slug}`}
       className="relative block aspect-[4/3] overflow-hidden group bg-zinc-900"
     >
-      {firstPhoto && (
+      {imageUrl && (
         <Image
-          src={firstPhoto}
+          src={imageUrl}
           alt={title}
           fill
+          unoptimized
           priority={priority}
           className="object-cover transition-transform duration-700 group-hover:scale-105"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
       )}
       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300" />
@@ -32,10 +32,8 @@ export default function GalleryCard({ slug, title, firstPhoto, subject, location
           <p className="text-white/70 text-[10px] tracking-[0.2em] uppercase mb-1">{subject}</p>
         )}
         <h2 className="text-white text-lg font-light leading-snug">{title}</h2>
-        {location && (
-          <p className="text-white/50 text-xs mt-1">{location}</p>
-        )}
+        {location && <p className="text-white/50 text-xs mt-1">{location}</p>}
       </div>
     </Link>
-  );
+  )
 }

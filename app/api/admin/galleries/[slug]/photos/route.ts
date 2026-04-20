@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import fs from "fs/promises"
-import path from "path"
+import { signedPhotoUrl } from "../../../../../../lib/cloudinary-server"
 
 export async function POST(
   request: NextRequest,
@@ -14,11 +13,22 @@ export async function POST(
     return NextResponse.json({ error: "No file provided" }, { status: 400 })
   }
 
-  const ext = path.extname(file.name).toLowerCase() || ".jpg"
-  const filename = `${crypto.randomUUID()}${ext}`
-  const dir = path.join(process.cwd(), "public", "images", "galleries", slug)
-  await fs.mkdir(dir, { recursive: true })
-  await fs.writeFile(path.join(dir, filename), Buffer.from(await file.arrayBuffer()))
+  const body = new FormData()
+  body.append("file", file)
+  body.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!)
+  body.append("folder", `galleries/${slug}`)
 
-  return NextResponse.json({ path: `/images/galleries/${slug}/${filename}` }, { status: 201 })
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+    { method: "POST", body }
+  )
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    return NextResponse.json({ error: "Cloudinary upload failed", detail: err }, { status: 502 })
+  }
+
+  const { public_id, format } = await res.json()
+  const path = `${public_id}.${format}`
+  return NextResponse.json({ path, thumbUrl: signedPhotoUrl(path, "thumb") }, { status: 201 })
 }

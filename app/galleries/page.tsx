@@ -1,8 +1,9 @@
-import { getGalleries } from "../../lib/reader";
-import GalleryCard from "../../components/GalleryCard";
+import { getGalleries } from "../../lib/reader"
+import GalleryCard from "../../components/GalleryCard"
+import { signedPhotoUrl } from "../../lib/cloudinary-server"
 
 export default async function GalleriesPage() {
-  const galleries = await getGalleries();
+  const galleries = await getGalleries()
 
   return (
     <main className="pt-[3.75rem]">
@@ -17,7 +18,11 @@ export default async function GalleriesPage() {
               key={gallery.slug}
               slug={gallery.slug}
               title={gallery.entry.title}
-              firstPhoto={gallery.entry.photos[0]?.image ?? null}
+              imageUrl={
+                gallery.entry.photos[0]?.image
+                  ? signedPhotoUrl(gallery.entry.photos[0].image, "thumb")
+                  : null
+              }
               subject={gallery.entry.subject}
               location={gallery.entry.location}
               priority={i < 3}
@@ -26,5 +31,5 @@ export default async function GalleriesPage() {
         </div>
       )}
     </main>
-  );
+  )
 }

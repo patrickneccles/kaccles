@@ -15,14 +15,16 @@ import { SortableContext, useSortable, arrayMove, rectSortingStrategy } from "@d
 import { CSS } from "@dnd-kit/utilities"
 import type { Photo } from "../../../../lib/gallery-store"
 
+export type DisplayPhoto = Photo & { thumbUrl: string }
+
 type Props = {
   slug: string
-  photos: Photo[]
-  onChange: (photos: Photo[]) => void
+  photos: DisplayPhoto[]
+  onChange: (photos: DisplayPhoto[]) => void
 }
 
 type ItemProps = {
-  photo: Photo
+  photo: DisplayPhoto
   onCaptionChange: (caption: string) => void
   onRemove: () => void
 }
@@ -43,7 +45,7 @@ function SortablePhoto({ photo, onCaptionChange, onRemove }: ItemProps) {
       className="relative flex flex-col"
     >
       <div className="aspect-square overflow-hidden rounded-lg bg-gray-100">
-        <img src={photo.image} alt="" className="w-full h-full object-cover" />
+        <img src={photo.thumbUrl} alt="" className="w-full h-full object-cover" />
       </div>
       <button
         {...attributes}
@@ -112,11 +114,11 @@ export default function PhotoEditor({ slug, photos, onChange }: Props) {
         body.append("file", file)
         const res = await fetch(`/api/admin/galleries/${slug}/photos`, { method: "POST", body })
         if (!res.ok) return null
-        const { path } = await res.json()
-        return { image: path, caption: "" } as Photo
+        const { path, thumbUrl } = await res.json()
+        return { image: path, caption: "", thumbUrl } as DisplayPhoto
       })
     )
-    const newPhotos = uploads.filter((p): p is Photo => p !== null)
+    const newPhotos = uploads.filter((p): p is DisplayPhoto => p !== null)
     if (newPhotos.length > 0) onChange([...photos, ...newPhotos])
   }
 

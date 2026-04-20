@@ -6,8 +6,8 @@ import "./globals.css"
 const geist = Geist({ variable: "--font-geist-sans", subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Kathy Eccles Photography",
-  description: "Wildlife photography by Kathy Eccles.",
+  title: "Kathryn Eccles Photography",
+  description: "Wildlife photography by Kathryn Eccles.",
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-black text-white min-h-screen flex flex-col">
         <header className="fixed top-0 inset-x-0 z-40 flex items-center justify-between px-6 py-5 bg-black/60 backdrop-blur-sm">
           <Link href="/" className="text-sm tracking-[0.2em] uppercase font-medium">
-            Kathy Eccles Photography
+            Kathryn Eccles Photography
           </Link>
           <nav>
             <Link
@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </header>
         <div className="flex-1 min-h-0">{children}</div>
         <footer className="flex items-center justify-between px-6 py-5 text-white/30 text-xs">
-          <span>© {new Date().getFullYear()} Kathy Eccles. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} Kathryn Eccles. All rights reserved.</span>
           <Link href="/admin" className="hover:text-white/60 transition-colors">
             Admin
           </Link>

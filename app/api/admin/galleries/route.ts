@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { revalidatePath } from "next/cache"
 import { listGalleries, readGallery, writeGallery, slugify } from "../../../../lib/gallery-store"
 
 export async function GET() {
@@ -31,5 +32,7 @@ export async function POST(request: NextRequest) {
     photos: [],
   })
 
+  revalidatePath("/galleries")
+  revalidatePath("/")
   return NextResponse.json({ slug }, { status: 201 })
 }

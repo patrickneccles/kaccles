@@ -2,6 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { getGalleries } from "../lib/reader"
 import GalleryCard from "../components/GalleryCard"
+import { signedPhotoUrl } from "../lib/cloudinary-server"
 
 export default async function HomePage() {
   const galleries = await getGalleries()
@@ -22,12 +23,12 @@ export default async function HomePage() {
       <Link href={`/galleries/${featured.slug}`} className="relative flex h-screen">
         {featured.entry.photos[0]?.image && (
           <Image
-            src={featured.entry.photos[0].image}
+            src={signedPhotoUrl(featured.entry.photos[0].image, "gallery")}
             alt={featured.entry.title}
             fill
+            unoptimized
             priority
             className="object-cover"
-            sizes="100vw"
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
@@ -54,7 +55,11 @@ export default async function HomePage() {
               key={gallery.slug}
               slug={gallery.slug}
               title={gallery.entry.title}
-              firstPhoto={gallery.entry.photos[0]?.image ?? null}
+              imageUrl={
+                gallery.entry.photos[0]?.image
+                  ? signedPhotoUrl(gallery.entry.photos[0].image, "thumb")
+                  : null
+              }
               subject={gallery.entry.subject}
               location={gallery.entry.location}
               priority={i < 2}

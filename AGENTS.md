@@ -8,11 +8,11 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ---
 
-# Kathy Eccles Photography
+# Kathryn Eccles Photography
 
 Wildlife photography portfolio. Easy upload experience for a non-technical user; professional exhibition quality for visitors.
 
-**Principles:** High quality + low maintenance on every decision. Photography is the hero — minimal chrome. Originals never publicly accessible (Cloudinary transforms only, always watermarked). CMS fields stay obvious and minimal.
+**Principles:** High quality + low maintenance on every decision. Photography is the hero — minimal chrome. Originals never publicly accessible (Cloudinary transforms only; gallery/lightbox view is watermarked, thumbnails are not). CMS fields stay obvious and minimal.
 
 ## Stack
 
@@ -20,8 +20,8 @@ Wildlife photography portfolio. Easy upload experience for a non-technical user;
 | ----------- | ------------------------------------------- | ---------------------------------------------------------------------------------- |
 | Framework   | Next.js 16 (App Router)                     | Read `node_modules/next/dist/docs/` before writing code                            |
 | CMS         | Bespoke admin                               | `/admin` — password-protected via `proxy.ts`                                       |
-| CMS Storage | Filesystem                                  | YAML in `content/galleries/`, images in `public/images/galleries/`                 |
-| Images      | Cloudinary                                  | Transforms in `lib/cloudinary.ts`; never inline. Watermark on every transform.     |
+| CMS Storage | Filesystem + Cloudinary                     | Metadata YAML in `content/galleries/`; images stored in Cloudinary                 |
+| Images      | Cloudinary                                  | Transforms in `lib/cloudinary.ts`; never inline. Gallery view is watermarked.      |
 | Hosting     | Self-hosted Mac via pm2 + Cloudflare Tunnel | No Vercel, no port forwarding — `cloudflared` creates an encrypted outbound tunnel |
 | Styles      | Tailwind CSS v4                             |                                                                                    |
 
@@ -50,13 +50,16 @@ One collection: `galleries` (a shoot or outing). Fields: `title`, `location`, `s
 
 - `ADMIN_PASSWORD` — protects `/admin`
 - `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` — used to build delivery URLs
+- `CLOUDINARY_API_SECRET` — server-only; used to sign delivery URLs (`lib/cloudinary-server.ts`)
+- `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` — unsigned upload preset name
+- `NEXT_PUBLIC_SITE_URL` — absolute site URL (e.g. `https://kaccles.com`); used for legacy fetch-mode URLs
 
 ## Deployment Checklist
 
-1. Set env vars in `.env.local`: `ADMIN_PASSWORD`, `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `NEXT_PUBLIC_SITE_URL`
+1. Set env vars in `.env.local`: `ADMIN_PASSWORD`, `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_SECRET`, `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET`, `NEXT_PUBLIC_SITE_URL`
 2. `npm run build && pm2 start "npm start" --name kaccles && pm2 save`
 3. `cloudflared tunnel route dns kaccles <domain>` — point domain to tunnel
-4. Configure Cloudinary upload preset with restricted direct access
+4. In Cloudinary: upload preset in unsigned mode, access mode public, incoming transform `w_4000,c_limit`; enable Strict Transformations; add `kaccles.com` to allowed referral domains
 
 ## Self-Hosting Architecture
 
