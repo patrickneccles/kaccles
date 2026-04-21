@@ -93,6 +93,4 @@ export async function writeGallery(slug: string, gallery: Gallery): Promise<void
 
 export async function deleteGallery(slug: string): Promise<void> {
   await fs.unlink(path.join(CONTENT_DIR, `${slug}.yaml`))
-  const imagesDir = path.join(process.cwd(), "public", "images", "galleries", slug)
-  await fs.rm(imagesDir, { recursive: true, force: true })
 }
