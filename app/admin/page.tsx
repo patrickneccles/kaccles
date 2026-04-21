@@ -1,13 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import Link from "next/link"
+import { useEffect, useState } from "react"
 import type { GalleryEntry } from "../../lib/gallery-store"
-import { useConfirm } from "./useConfirm"
 
 export default function AdminPage() {
   const [galleries, setGalleries] = useState<GalleryEntry[]>([])
-  const { dialog, confirm } = useConfirm()
 
   useEffect(() => {
     const controller = new AbortController()
@@ -18,15 +16,8 @@ export default function AdminPage() {
     return () => controller.abort()
   }, [])
 
-  async function handleDelete(slug: string, title: string) {
-    if (!(await confirm(`Delete "${title}"? This cannot be undone.`))) return
-    await fetch(`/api/admin/galleries/${slug}`, { method: "DELETE" })
-    setGalleries((prev) => prev.filter((g) => g.slug !== slug))
-  }
-
   return (
     <>
-      {dialog}
       <h1 className="text-2xl font-bold my-12">Admin</h1>
 
       <section className="mb-12">
@@ -46,30 +37,27 @@ export default function AdminPage() {
         ) : (
           <ul className="divide-y divide-gray-200 border-t border-gray-200">
             {galleries.map(({ slug, gallery }) => (
-              <li
-                key={slug}
-                className="flex items-center gap-4 -mx-6 px-6 hover:bg-gray-100 transition-colors"
-              >
-                <Link href={`/admin/galleries/${slug}`} className="min-w-0 flex-1 py-4">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-sm truncate">{gallery.title}</span>
-                    {!gallery.published && (
-                      <span className="shrink-0 text-xs px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 font-medium">
-                        Draft
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-gray-400 text-xs mt-0.5">
-                    {gallery.shootDate || "No date"} · {gallery.photos.length} photo
-                    {gallery.photos.length !== 1 ? "s" : ""}
-                  </p>
-                </Link>
-                <button
-                  onClick={() => handleDelete(slug, gallery.title)}
-                  className="shrink-0 text-sm text-red-400 hover:text-red-600 transition-colors"
+              <li key={slug} className="-mx-6 hover:bg-gray-100 transition-colors">
+                <Link
+                  href={`/admin/galleries/${slug}`}
+                  className="flex items-center justify-between px-6 py-4"
                 >
-                  Delete
-                </button>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm truncate">{gallery.title}</span>
+                      {!gallery.published && (
+                        <span className="shrink-0 text-xs px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 font-medium">
+                          Draft
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-gray-400 text-xs mt-0.5">
+                      {gallery.shootDate || "No date"} · {gallery.photos.length} photo
+                      {gallery.photos.length !== 1 ? "s" : ""}
+                    </p>
+                  </div>
+                  <span className="shrink-0 text-sm text-gray-400">Edit →</span>
+                </Link>
               </li>
             ))}
           </ul>
