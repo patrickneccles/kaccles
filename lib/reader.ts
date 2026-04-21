@@ -6,9 +6,13 @@ export type GalleryListItem = { slug: string; entry: Gallery }
 
 export async function getGalleries(): Promise<GalleryListItem[]> {
   const galleries = await listGalleries()
-  return galleries.map(({ slug, gallery }) => ({ slug, entry: gallery }))
+  return galleries
+    .filter(({ gallery }) => gallery.published)
+    .map(({ slug, gallery }) => ({ slug, entry: gallery }))
 }
 
 export async function getGallery(slug: string): Promise<Gallery | null> {
-  return readGallery(slug)
+  const gallery = await readGallery(slug)
+  if (!gallery?.published) return null
+  return gallery
 }

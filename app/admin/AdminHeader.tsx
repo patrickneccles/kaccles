@@ -8,9 +8,17 @@ export function AdminHeader() {
       <Link href="/admin" className="font-medium text-sm hover:opacity-70 transition-opacity">
         Kathryn Eccles Photography
       </Link>
-      <Link href="/" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
-        ← View site
-      </Link>
+      <div className="flex items-center gap-5">
+        <Link
+          href="/admin/about"
+          className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
+        >
+          About
+        </Link>
+        <Link href="/" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+          ← View site
+        </Link>
+      </div>
     </header>
   )
 }

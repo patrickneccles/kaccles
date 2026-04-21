@@ -18,9 +18,13 @@ export default async function HomePage() {
   const [featured, ...rest] = galleries
 
   return (
-    <main className="bg-black">
+    <>
       {/* Hero — full-screen first photo of the most recent gallery */}
-      <Link href={`/galleries/${featured.slug}`} className="relative flex h-screen">
+      <Link
+        href={`/galleries/${featured.slug}`}
+        className="relative flex"
+        style={{ height: "calc(100vh - 3.75rem)" }}
+      >
         {featured.entry.photos[0]?.image && (
           <Image
             src={signedPhotoUrl(featured.entry.photos[0].image, "gallery")}
@@ -67,6 +71,6 @@ export default async function HomePage() {
           ))}
         </section>
       )}
-    </main>
+    </>
   )
 }

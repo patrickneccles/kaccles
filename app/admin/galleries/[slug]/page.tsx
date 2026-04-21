@@ -1,12 +1,13 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import PhotoEditor, { type DisplayPhoto } from "./PhotoEditor"
 import type { Gallery } from "../../../../lib/gallery-store"
+import { useConfirm } from "../../useConfirm"
+import { useSaveStatus } from "../../useSaveStatus"
 
 type DisplayGallery = Omit<Gallery, "photos"> & { photos: DisplayPhoto[] }
-import { useConfirm } from "../../useConfirm"
 
 const EMPTY: DisplayGallery = {
   title: "",
@@ -15,6 +16,7 @@ const EMPTY: DisplayGallery = {
   shootDate: "",
   description: "",
   photos: [],
+  published: true,
 }
 
 export default function EditGalleryPage() {
@@ -22,42 +24,36 @@ export default function EditGalleryPage() {
   const router = useRouter()
   const [gallery, setGallery] = useState<DisplayGallery>(EMPTY)
   const [savedGallery, setSavedGallery] = useState<DisplayGallery | null>(null)
-  const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
   const { dialog, confirm } = useConfirm()
-  const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const { saving, label, begin, finish, abort } = useSaveStatus()
 
   const isDirty = savedGallery !== null && JSON.stringify(gallery) !== JSON.stringify(savedGallery)
 
   useEffect(() => {
-    fetch(`/api/admin/galleries/${slug}`)
+    const controller = new AbortController()
+    fetch(`/api/admin/galleries/${slug}`, { signal: controller.signal })
       .then((r) => r.json())
       .then((data) => {
         setGallery(data)
         setSavedGallery(data)
       })
+      .catch(() => {})
+    return () => controller.abort()
   }, [slug])
 
-  useEffect(
-    () => () => {
-      if (savedTimerRef.current) clearTimeout(savedTimerRef.current)
-    },
-    []
-  )
-
   async function handleSave() {
-    setSaving(true)
+    begin()
     const res = await fetch(`/api/admin/galleries/${slug}`, {
       method: "PUT",
       body: JSON.stringify(gallery),
       headers: { "Content-Type": "application/json" },
     })
-    setSaving(false)
-    if (!res.ok) return
+    if (!res.ok) {
+      abort()
+      return
+    }
     setSavedGallery(gallery)
-    setSaved(true)
-    if (savedTimerRef.current) clearTimeout(savedTimerRef.current)
-    savedTimerRef.current = setTimeout(() => setSaved(false), 2000)
+    finish()
   }
 
   async function handleDelete() {
@@ -80,7 +76,7 @@ export default function EditGalleryPage() {
   }
 
   return (
-    <main className="max-w-3xl mx-auto px-6 py-10">
+    <>
       {dialog}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
@@ -88,17 +84,29 @@ export default function EditGalleryPage() {
             onClick={handleBack}
             className="text-sm text-gray-400 hover:text-gray-700 transition-colors"
           >
-            ← Galleries
+            ← Back
           </button>
           {isDirty && <span className="text-xs text-amber-600 font-medium">Unsaved changes</span>}
         </div>
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="px-4 py-2 text-sm bg-gray-900 text-white rounded-lg hover:bg-gray-700 disabled:opacity-40 transition-colors min-w-[64px]"
-        >
-          {saved ? "Saved" : saving ? "Saving…" : "Save"}
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setGallery((prev) => ({ ...prev, published: !prev.published }))}
+            className={`px-3 py-2 text-xs rounded-lg border font-medium transition-colors ${
+              gallery.published
+                ? "border-green-200 bg-green-50 text-green-700 hover:bg-green-100"
+                : "border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100"
+            }`}
+          >
+            {gallery.published ? "Published" : "Draft"}
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="px-4 py-2 text-sm bg-gray-900 text-white rounded-lg hover:bg-gray-700 disabled:opacity-40 transition-colors min-w-[64px]"
+          >
+            {label}
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-col gap-6">
@@ -150,7 +158,7 @@ export default function EditGalleryPage() {
           Delete gallery
         </button>
       </div>
-    </main>
+    </>
   )
 }
 

@@ -16,6 +16,7 @@ export type Gallery = {
   shootDate: string
   description: string
   photos: Photo[]
+  published: boolean
 }
 
 export type GalleryEntry = {
@@ -71,6 +72,7 @@ export async function readGallery(slug: string): Promise<Gallery | null> {
         image: p.image,
         caption: p.caption ?? "",
       })),
+      published: data.published !== false,
     }
   } catch {
     return null
@@ -84,6 +86,7 @@ export async function writeGallery(slug: string, gallery: Gallery): Promise<void
   if (gallery.subject) data.subject = gallery.subject
   if (gallery.shootDate) data.shootDate = gallery.shootDate
   if (gallery.description) data.description = gallery.description
+  if (gallery.published === false) data.published = false
   data.photos = gallery.photos
   await fs.writeFile(path.join(CONTENT_DIR, `${slug}.yaml`), stringify(data))
 }

@@ -59,7 +59,7 @@ export default async function GalleryPage({ params }: { params: Promise<{ slug: 
     }))
 
   return (
-    <main className="pt-[3.75rem]">
+    <>
       <div className="px-6 py-10 md:px-12">
         <Link
           href="/galleries"
@@ -99,6 +99,6 @@ export default async function GalleryPage({ params }: { params: Promise<{ slug: 
       <div className="px-0.5 pb-0.5">
         <PhotoGrid photos={photos} title={gallery.title} />
       </div>
-    </main>
+    </>
   )
 }

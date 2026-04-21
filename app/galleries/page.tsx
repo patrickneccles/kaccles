@@ -6,7 +6,7 @@ export default async function GalleriesPage() {
   const galleries = await getGalleries()
 
   return (
-    <main className="pt-[3.75rem]">
+    <>
       {galleries.length === 0 ? (
         <div className="flex h-[calc(100vh-3.75rem)] items-center justify-center">
           <p className="text-white/30 text-xs tracking-[0.3em] uppercase">No galleries yet</p>
@@ -30,6 +30,6 @@ export default async function GalleriesPage() {
           ))}
         </div>
       )}
-    </main>
+    </>
   )
 }

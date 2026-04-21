@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
     shootDate: "",
     description: "",
     photos: [],
+    published: true,
   })
 
   revalidatePath("/galleries")
