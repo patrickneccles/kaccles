@@ -50,7 +50,8 @@ One collection: `galleries` (a shoot or outing). Fields: `title`, `location`, `s
 
 - `ADMIN_PASSWORD` — protects `/admin`
 - `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` — used to build delivery URLs
-- `CLOUDINARY_API_SECRET` — server-only; used to sign delivery URLs (`lib/cloudinary-server.ts`)
+- `CLOUDINARY_API_KEY` — server-only; used to sign Cloudinary destroy requests
+- `CLOUDINARY_API_SECRET` — server-only; used to sign delivery URLs and destroy requests (`lib/cloudinary-server.ts`)
 - `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` — unsigned upload preset name
 - `NEXT_PUBLIC_SITE_URL` — absolute site URL (e.g. `https://kaccles.com`); used for legacy fetch-mode URLs
 

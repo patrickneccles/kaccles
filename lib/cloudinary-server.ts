@@ -13,6 +13,31 @@ function sign(toSign: string): string {
 }
 
 /**
+ * Deletes an asset from Cloudinary by its stored image value.
+ * No-ops for legacy local paths (starts with '/').
+ */
+export async function deleteCloudinaryImage(image: string): Promise<void> {
+  if (image.startsWith("/")) return
+  const publicId = image.replace(/\.[^.]+$/, "") // strip extension
+  const timestamp = Math.floor(Date.now() / 1000).toString()
+  const toSign = `public_id=${publicId}&timestamp=${timestamp}`
+  // Destroy API uses SHA1 hex (not the truncated base64url used for delivery URLs)
+  const signature = crypto
+    .createHash("sha1")
+    .update(toSign + process.env.CLOUDINARY_API_SECRET!)
+    .digest("hex")
+  await fetch(`https://api.cloudinary.com/v1_1/${CLOUD}/image/destroy`, {
+    method: "POST",
+    body: new URLSearchParams({
+      public_id: publicId,
+      timestamp,
+      api_key: process.env.CLOUDINARY_API_KEY!,
+      signature,
+    }),
+  })
+}
+
+/**
  * Generates a signed Cloudinary delivery URL.
  * Must only be called server-side (API routes, server components).
  */
